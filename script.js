@@ -6,13 +6,13 @@ const urlUltimoDato = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds/l
 const urlHistorial  = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=6`;
 
 // RUTAS DE LAS IMÁGENES
-const IMAGEN_ENTRADA = 'Primera.jpeg';   
-const IMAGEN_CASO_1  = 'Segunda.jpeg';   
-const IMAGEN_CASO_2  = 'Tercera.jpeg';   
-const IMAGEN_CASO_3  = 'Cuarta.jpeg';    
-const IMAGEN_CASO_4  = 'Quinta.jpeg';    
+const IMAGEN_ENTRADA = 'Primera (2).jpeg';   
+const IMAGEN_CASO_1  = 'Segunda (2).jpeg';   
+const IMAGEN_CASO_2  = 'Tercera (2).jpeg';   
+const IMAGEN_CASO_3  = 'Cuarta (2).jpeg';    
+const IMAGEN_CASO_4  = 'Quinta (2).jpeg';    
 
-// VARIABLE DE CONTROL DE FASE
+// VARIABLE DE CONTROL DE FASE (MÁQUINA DE ESTADOS)
 let faseRobot = 0; 
 
 function actualizarReloj() {
@@ -41,14 +41,15 @@ async function consultarThingSpeak() {
         if (valorF2_Hum !== null) document.getElementById('hum-valor').innerText = `${valorF2_Hum} %`;
         if (valorF5_Dist !== null) document.getElementById('dist-valor').innerText = `${valorF5_Dist} cm`;
 
-        // Traducir valor numérico a nombre de color
+        // Traducir valor numérico a nombre de color (Calibración Unificada)
+        let colorNum = null;
         if (valorF3_Color !== null) {
-            const colorNum = parseInt(valorF3_Color);
+            colorNum = parseInt(valorF3_Color);
             let nombreColor = `Código: ${colorNum}`;
-            if (colorNum <= 749) nombreColor = "Blanco";
-            else if (colorNum >= 750 && colorNum <= 800) nombreColor = "Amarillo";
-            else if (colorNum >= 850 && colorNum <= 891) nombreColor = "Rosa";
-            else if (colorNum >= 892) nombreColor = "Verde";
+            
+            if (colorNum >= 780 && colorNum <= 860) nombreColor = "Verde";
+            else if (colorNum >= 700 && colorNum <= 800) nombreColor = "Amarillo";
+            else if (colorNum > 970) nombreColor = "Negro";
             
             document.getElementById('color-valor').innerText = nombreColor;
             document.getElementById('color-estado').innerText = `Lectura activa: ${colorNum}`;
@@ -57,6 +58,8 @@ async function consultarThingSpeak() {
         // ========================================================
         // CONTROL LÓGICO SECUENCIAL DE IMÁGENES
         // ========================================================
+        
+        // 1. CONTROL DE EMERGENCIA POR FUEGO (Prioridad Máxima)
         if (valorF4_Fuego !== null && parseInt(valorF4_Fuego) === 1) {
             document.getElementById('fuego-valor').innerText = "¡FUEGO!";
             document.getElementById('fuego-estado').innerText = "¡Emergencia!";
@@ -66,11 +69,12 @@ async function consultarThingSpeak() {
             badgeFuego.style.background = "rgba(239, 68, 68, 0.2)";
             badgeFuego.style.color = "#ef4444";
 
-            elementoImagen.src = IMAGEN_CASO_4;
-            elementoDesc.innerText = "Caso 4 detectado: ¡Fuego en la pista! Operación abortada.";
+            elementoImagen.src = IMAGEN_CASO_4; // Quinta.jpeg
+            elementoDesc.innerText = "Fase Alerta: ¡Fuego detectado en la pista! Datos enviados de emergencia.";
             elementoDesc.style.color = "#ef4444";
         } 
         else {
+            // Restablecer estado de alerta de fuego si no hay peligro
             if (valorF4_Fuego !== null) {
                 document.getElementById('fuego-valor').innerText = "SEGURO";
                 document.getElementById('fuego-estado').innerText = "Sin anomalías";
@@ -80,38 +84,34 @@ async function consultarThingSpeak() {
                 badgeFuego.style.color = "#4ade80";
             }
 
-            if (valorF3_Color !== null) {
-                const colorNum = parseInt(valorF3_Color);
-                elementoDesc.style.color = ""; 
+            elementoDesc.style.color = ""; 
 
-                if (colorNum >= 750 && colorNum <= 800) {
-                    faseRobot = 1; 
-                    elementoImagen.src = IMAGEN_CASO_1;
-                    elementoDesc.innerText = "Caso 1: Amarillo detectado. El robot inició su recorrido.";
-                } 
-                else if (colorNum >= 850 && colorNum <= 891) {
-                    if (faseRobot === 0 || faseRobot === 1) {
-                        faseRobot = 2; 
-                        elementoImagen.src = IMAGEN_CASO_2;
-                        elementoDesc.innerText = "Caso 2: Color Rosa detectado por primera vez.";
-                    } 
-                    else if (faseRobot === 2) {
-                        faseRobot = 3; 
-                        elementoImagen.src = IMAGEN_CASO_3;
-                        elementoDesc.innerText = "Caso 3: Color Rosa detectado de vuelta (Segunda vez).";
-                    }
-                    else if (faseRobot === 3) {
-                        elementoImagen.src = IMAGEN_CASO_3;
-                    }
-                } 
-                else if (colorNum <= 749) {
-                    if (faseRobot === 0) {
-                        elementoImagen.src = IMAGEN_ENTRADA;
-                        elementoDesc.innerText = "Esperando que el robot detecte Amarillo...";
-                    }
+            // Máquina de estados secuencial para el recorrido del robot
+            if (faseRobot === 0) {
+                // Parte 1: Esperando el color Verde (780 a 860)
+                if (colorNum !== null && colorNum >= 780 && colorNum <= 860) {
+                    faseRobot = 1;
+                    elementoImagen.src = IMAGEN_CASO_1; // Segunda.jpeg
+                    elementoDesc.innerText = `Parte 1: Verde detectado (${colorNum}). Recorrido iniciado.`;
+                } else {
+                    elementoImagen.src = IMAGEN_ENTRADA; // Primera.jpeg
+                    elementoDesc.innerText = "Esperando que el robot entre en zona Verde (780 - 860)...";
                 }
-                else if (colorNum >= 892) {
-                    elementoDesc.innerText = `Robot cruzando por zona Verde (${colorNum}).`;
+            } 
+            else if (faseRobot === 1) {
+                // Parte 2: Busca el color Amarillo (700 a 800)
+                if (colorNum !== null && colorNum >= 700 && colorNum <= 800) {
+                    faseRobot = 2;
+                    elementoImagen.src = IMAGEN_CASO_2; // Tercera.jpeg
+                    elementoDesc.innerText = `Parte 2: Amarillo detectado (${colorNum}) con éxito.`;
+                }
+            } 
+            else if (faseRobot === 2) {
+                // Parte 3: Busca el color Negro (> 970)
+                if (colorNum !== null && colorNum > 970) {
+                    faseRobot = 3;
+                    elementoImagen.src = IMAGEN_CASO_3; // Cuarta.jpeg
+                    elementoDesc.innerText = `Parte 3: Negro detectado (${colorNum}). Estación alcanzada.`;
                 }
             }
         }
