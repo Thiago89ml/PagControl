@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puesto de Control - Estación Ambiental</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-seccion">
+            <h2>CONTROL_OS</h2>
+        </div>
+        
+        <ul class="menu-navegacion">
+            <li><a href="#" class="activo">Vista General</a></li>
+            <li><a href="#">Sensores</a></li>
+            <li><a href="#">Historial IoT</a></li>
+            <li><a href="#">Seguridad</a></li>
+            <li><a href="#">Configuración</a></li>
+        </ul>
+
+        <div class="estado-sistema">
+            <span class="indicador-linea"></span>
+            <span id="global-status">SISTEMA ONLINE</span>
+        </div>
+    </aside>
+
+    <main class="contenido-principal">
+        
+        <header class="header-principal">
+            <div>
+                <h1>Puesto de Mando Central</h1>
+                <p class="subtitulo">Monitoreo de telemetría en tiempo real (MakeCode + ThingSpeak)</p>
+            </div>
+            <div class="fecha-hora" id="reloj">Cargando cronómetro...</div>
+        </header>
+
+        <section class="grid-metricas">
+            <div class="tarjeta azul">
+                <div class="tarjeta-titulo">Temperatura</div>
+                <div class="tarjeta-valor" id="temp-valor">--- °C</div>
+                <div class="tarjeta-subtexto" id="temp-estado">Esperando datos...</div>
+            </div>
+            <div class="tarjeta verde">
+                <div class="tarjeta-titulo">Humedad Ambiente</div>
+                <div class="tarjeta-valor" id="hum-valor">--- %</div>
+                <div class="tarjeta-subtexto" id="hum-estado">Sincronizando...</div>
+            </div>
+            <div class="tarjeta amarillo">
+                <div class="tarjeta-titulo">Sensor de Color</div>
+                <div class="tarjeta-valor" id="color-valor">---</div>
+                <div class="tarjeta-subtexto" id="color-estado">Escuchando red...</div>
+            </div>
+            <div class="tarjeta rojo">
+                <div class="tarjeta-titulo">Sensor de Fuego</div>
+                <div class="tarjeta-valor" id="fuego-valor">---</div>
+                <div class="tarjeta-subtexto" id="fuego-estado">Monitoreando...</div>
+            </div>
+            <div class="tarjeta azul"> 
+                <div class="tarjeta-titulo">Distancia</div>
+                <div class="tarjeta-valor" id="dist-valor">--- cm</div>
+                <div class="tarjeta-subtexto" id="dist-estado">Midiendo...</div>
+            </div>
+        </section>
+
+        <section class="panel-imagenes">
+            <div class="bloque-control">
+                <h3>Monitoreo Visual del Recorrido (Robot)</h3>
+                <div class="contenedor-galeria">
+                    <img id="imagen-estado" src="Primera.jpeg" alt="Estado del robot" class="img-fluida">
+                </div>
+                <p id="imagen-descripcion" class="subtitulo-imagen">Esperando que el robot detecte Amarillo...</p>
+            </div>
+        </section>
+
+        <section class="panel-monitoreo">
+            
+            <div class="bloque-control bloque-historial-grande">
+                <h3>Historial de Mediciones General (Todos los Fields)</h3>
+                <div class="contenedor-tabla-historial">
+                    <table class="tabla-historial-completo">
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>T (°C)</th>
+                                <th>H (%)</th>
+                                <th>Color</th>
+                                <th>Fuego</th>
+                                <th>D (cm)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-historial-body">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--texto-mutado);">Cargando historial de ThingSpeak...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bloque-control">
+                <h3>Registro de Alertas</h3>
+                <table class="tabla-alertas">
+                    <thead>
+                        <tr>
+                            <th>Origen</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sensor Ambiente (F1/F2)</td>
+                            <td><span class="badge" id="badge-ambiente" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">OK</span></td>
+                        </tr>
+                        <tr>
+                            <td>Sensor de Fuego (F4)</td>
+                            <td><span class="badge" id="badge-fuego" style="background: rgba(74, 222, 128, 0.2); color: #4ade80;">SEGURO</span></td>
+                        </tr>
+                        <tr>
+                            <td>Módulo Wi-Fi IoT</td>
+                            <td><span class="badge" id="badge-wifi" style="background: rgba(74, 222, 128, 0.2); color: #4ade80;">CONECTADO</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

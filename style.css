@@ -1,0 +1,361 @@
+/* ========================================================
+   1. VARIABLES GLOBALES Y RESETEO
+   ======================================================== */
+:root {
+    --bg-principal: #0f172a;    
+    --bg-tarjeta: #1e293b;      
+    --borde: #334155;           
+    --texto-base: #f8fafc;      
+    --texto-mutado: #94a3b8;    
+    
+    --azul: #38bdf8;
+    --verde: #4ade80;
+    --amarillo: #facc15;
+    --rojo: #ef4444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-principal);
+    color: var(--texto-base);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ========================================================
+   2. BARRA LATERAL (SIDEBAR)
+   ======================================================== */
+.sidebar {
+    width: 260px;
+    background-color: #090d16;
+    border-right: 1px solid var(--borde);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    position: fixed;
+    height: 100vh;
+}
+
+.logo-seccion h2 {
+    color: var(--azul);
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    font-weight: 800;
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--borde);
+}
+
+.menu-navegacion {
+    list-style: none;
+    margin-top: 30px;
+    flex-grow: 1;
+}
+
+.menu-navegacion li {
+    margin-bottom: 10px;
+}
+
+.menu-navegacion a {
+    display: block;
+    color: var(--texto-mutado);
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.menu-navegacion a:hover, 
+.menu-navegacion a.activo {
+    background-color: var(--bg-tarjeta);
+    color: var(--texto-base);
+    border-left: 4px solid var(--azul);
+    padding-left: 11px;
+}
+
+.estado-sistema {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid var(--borde);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.indicador-linea {
+    width: 10px;
+    height: 10px;
+    background-color: var(--verde);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--verde);
+}
+
+/* ========================================================
+   3. CONTENIDO PRINCIPAL Y HEADER
+   ======================================================== */
+.contenido-principal {
+    margin-left: 260px; 
+    flex-grow: 1;
+    padding: 30px;
+    max-width: 1200px;
+}
+
+.header-principal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--borde);
+    padding-bottom: 20px;
+}
+
+.header-principal h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.subtitulo {
+    color: var(--texto-mutado);
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+
+.fecha-hora {
+    background-color: var(--bg-tarjeta);
+    border: 1px solid var(--borde);
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.95rem;
+    color: var(--azul);
+}
+
+/* ========================================================
+   4. CUADRÍCULA DE TARJETAS (METRICAS)
+   ======================================================== */
+.grid-metricas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+@media(min-width: 900px) {
+    .grid-metricas {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+.tarjeta {
+    background-color: var(--bg-tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.tarjeta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.tarjeta.azul::before { background-color: var(--azul); }
+.tarjeta.verde::before { background-color: var(--verde); }
+.tarjeta.amarillo::before { background-color: var(--amarillo); }
+.tarjeta.rojo::before { background-color: var(--rojo); }
+
+.tarjeta-titulo {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--texto-mutado);
+    font-weight: 600;
+}
+
+.tarjeta-valor {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 15px 0 5px 0;
+    word-break: break-all;
+}
+
+.tarjeta-subtexto {
+    font-size: 0.8rem;
+    color: var(--texto-mutado);
+}
+
+/* ========================================================
+   5. SECCIÓN DE IMÁGENES DINÁMICAS
+   ======================================================== */
+.panel-imagenes {
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.contenedor-galeria {
+    background: #131d31; 
+    border: 2px solid var(--borde);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.4);
+    margin-top: 15px;
+    margin-bottom: 12px;
+}
+
+.img-fluida {
+    max-width: 100%;
+    height: auto;
+    max-height: 380px; 
+    border-radius: 6px;
+    border: 1px solid #475569;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out, border-color 0.3s;
+}
+
+.img-fluida:hover {
+    transform: scale(1.01);
+}
+
+.subtitulo-imagen {
+    font-size: 1rem;
+    color: var(--texto-mutado);
+    text-align: center;
+    font-weight: 600;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* ========================================================
+   6. PANEL INFERIOR (HISTORIAL ASIMÉTRICO / MÁS GRANDE)
+   ======================================================== */
+.panel-monitoreo {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Relación 2:1 para expandir la tabla */
+    gap: 25px;
+}
+
+.bloque-control {
+    background-color: var(--bg-tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.bloque-control h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--texto-base);
+    border-bottom: 1px solid #334155;
+    padding-bottom: 10px;
+}
+
+/* --- Tabla Histórica de Fields --- */
+.contenedor-tabla-historial {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-historial-completo {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.tabla-historial-completo th, .tabla-historial-completo td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #1e293b;
+}
+
+.tabla-historial-completo th {
+    color: var(--texto-mutado);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    border-bottom: 1px solid var(--borde);
+    padding-bottom: 12px;
+}
+
+.tabla-historial-completo tbody tr:hover {
+    background-color: rgba(56, 189, 248, 0.03);
+}
+
+/* --- Tabla de Alertas --- */
+.tabla-alertas {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabla-alertas th {
+    color: var(--texto-mutado);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--borde);
+}
+
+.tabla-alertas td {
+    padding: 14px 0;
+    border-bottom: 1px solid #1e293b;
+    font-size: 0.95rem;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+/* ========================================================
+   7. RESPONSIVIDAD GENERAL
+   ======================================================== */
+@media (max-width: 950px) {
+    .panel-monitoreo {
+        grid-template-columns: 1fr; /* Pasa a fila única en pantallas chicas */
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--borde);
+    }
+    .contenido-principal {
+        margin-left: 0;
+        padding: 15px;
+    }
+    .header-principal {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
